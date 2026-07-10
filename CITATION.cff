@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+title: "J-Space Guardian Layer: Real-Time LLM Internal-State Safety Monitoring"
+message: "If you use this software in your research, please cite it."
+type: software
+authors:
+  - family-names: "Vega"
+    given-names: "Michael"
+    affiliation: "Noirsys"
+  - name: "Noirsys"
+repository-code: "https://github.com/noirsys/j-space-guardian"
+license: "MIT"
+year: 2026

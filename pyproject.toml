@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "straightshot"
+version = "1.0.0"
+description = "Real-time LLM internal-state safety monitoring via Jacobian lens, hidden-state probes, and entropy dynamics"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Noirsys", email = "contact@new-ashtabula-initiative.com"},
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Security",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.0",
+    "transformers>=4.40",
+    "jlens>=0.1.0",
+]
+
+[project.urls]
+Repository = "https://github.com/noirsys/straightshot"
+Documentation = "https://github.com/noirsys/straightshot#readme"
+
+[tool.setuptools.packages.find]
+include = ["straightshot*"]

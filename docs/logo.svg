@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 180">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6366f1"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="s" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="640" height="180" rx="12" fill="#0f172a"/>
+  
+  <!-- Lens icon -->
+  <g transform="translate(48, 44)">
+    <!-- Outer ring -->
+    <circle cx="36" cy="36" r="30" fill="none" stroke="url(#g)" stroke-width="3"/>
+    <!-- Inner pupil -->
+    <circle cx="36" cy="36" r="12" fill="url(#g)" opacity="0.6"/>
+    <!-- Crosshair -->
+    <line x1="4" y1="36" x2="68" y2="36" stroke="#334155" stroke-width="0.5"/>
+    <line x1="36" y1="4" x2="36" y2="68" stroke="#334155" stroke-width="0.5"/>
+    <!-- Light rays -->
+    <path d="M58 14 Q72 0 90 10" fill="none" stroke="url(#g)" stroke-width="2" opacity="0.4"/>
+    <path d="M62 22 Q80 14 94 24" fill="none" stroke="url(#g)" stroke-width="1.5" opacity="0.3"/>
+    <!-- Handle (right side) -->
+    <rect x="62" y="46" width="16" height="6" rx="3" fill="url(#s)"/>
+  </g>
+  
+  <!-- Title -->
+  <text x="140" y="90" font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="800" fill="#f1f5f9" letter-spacing="-1">Introscope</text>
+  
+  <!-- Tagline -->
+  <text x="140" y="124" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="400" fill="#94a3b8" letter-spacing="0.3">Real-time LLM internal-state safety monitoring</text>
+  
+  <!-- Subtitle -->
+  <text x="140" y="148" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="400" fill="#64748b">Jacobian lens · hidden-state probes · entropy dynamics</text>
+</svg>

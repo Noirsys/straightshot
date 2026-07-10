@@ -1,0 +1,16 @@
+# Byte-compiled
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+.venv/
+env/
+
+# Model artifacts (large, download separately)
+models/*.pt
+models/*.pkl
+
+# OS junk
+.DS_Store
+Thumbs.db
