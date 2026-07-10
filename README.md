@@ -138,7 +138,7 @@ cd straightshot
 pip install -e .
 ```
 
-Download the J-space lens (388MB) from [GitHub Releases](https://github.com/Noirsys/straightshot/releases) and place in `models/jacobian_lens_4b.pt`.
+Download the J-space lens (388MB) from the [v1.0.0 Release](https://github.com/Noirsys/straightshot/releases/tag/v1.0.0).
 
 ---
 
