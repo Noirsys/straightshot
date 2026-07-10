@@ -661,32 +661,32 @@ StrAIght Shot includes a real-time monitoring dashboard that visualizes the thre
 \centering
 \small
 % ── Probe Gauge and Concept Radar ──
-\begin{minipage}[t]{0.42\textwidth}
+\begin{minipage}[t]{0.40\textwidth}
 \centering
-\fbox{\begin{minipage}{0.95\linewidth}
+\fbox{\begin{minipage}{0.92\linewidth}
 \centering
 \textbf{Probe Gauge}\\[4pt]
-\colorbox{redverd!30}{\rule{0.72\linewidth}{10pt}}\colorbox{gray!20}{\rule{0.28\linewidth}{10pt}}\\[2pt]
-Score: \textbf{0.947} \hspace{8pt} Verdict: \textcolor{redverd}{\textbf{BLOCK}}
+\colorbox{redverd!30}{\rule{0.68\linewidth}{10pt}}\colorbox{gray!20}{\rule{0.32\linewidth}{10pt}}\\[2pt]
+Score: \textbf{0.947} ~~ Verdict: \textcolor{redverd}{\textbf{BLOCK}}
 \end{minipage}}
-\vspace{4pt}
+\vspace{3pt}
 
-\fbox{\begin{minipage}{0.95\linewidth}
+\fbox{\begin{minipage}{0.92\linewidth}
 \centering
 \textbf{Entropy Sparkline}\\[4pt]
-2.42~\textcolor{gray}{------}\tikz[baseline=-0.5ex]{\draw[thick] (0,0) -- (0.3,0.15) -- (0.6,0.05) -- (0.9,0.25) -- (1.2,0.2) -- (1.5,0.0);}~2.98\\[1pt]
-{\footnotesize baseline \hspace{28pt} spike!}
+2.42~\textcolor{gray}{---}\tikz[baseline=-0.5ex]{\draw[thick] (0,0) -- (0.3,0.15) -- (0.6,0.05) -- (0.9,0.25) -- (1.2,0.2) -- (1.5,0.0);}~2.98\\[1pt]
+{\footnotesize baseline \hspace{22pt} spike!}
 \end{minipage}}
-\vspace{4pt}
+\vspace{3pt}
 
-\fbox{\begin{minipage}{0.95\linewidth}
+\fbox{\begin{minipage}{0.92\linewidth}
 \centering
 \textbf{Silent Tokens}\\[4pt]
-\begin{tabular}{@{}lll@{}}
-\texttt{"ignore"}        & \colorbox{redverd!60}{\rule{0.72\linewidth}{6pt}} & 0.89 \textbf{CRITICAL} \\
-\texttt{"system\_prompt"} & \colorbox{yellowverd!60}{\rule{0.61\linewidth}{6pt}} & 0.82 HIGH \\
-\texttt{"override"}       & \colorbox{yellowverd!60}{\rule{0.56\linewidth}{6pt}} & 0.76 HIGH \\
-\end{tabular}
+\raggedright
+\texttt{"ignore"} \hfill \colorbox{redverd!60}{\rule{0.44\linewidth}{6pt}} \hfill 0.89 \textbf{CRITICAL}\\[3pt]
+\texttt{"system\_prompt"} \hfill \colorbox{yellowverd!60}{\rule{0.37\linewidth}{6pt}} \hfill 0.82 HIGH\\[3pt]
+\texttt{"override"} \hfill \colorbox{yellowverd!60}{\rule{0.34\linewidth}{6pt}} \hfill 0.76 HIGH
+\vspace{2pt}
 \end{minipage}}
 \end{minipage}
 \hfill
