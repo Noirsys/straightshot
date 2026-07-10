@@ -4,39 +4,44 @@
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \citation{llamaguard,wildguard}
 \citation{anthropic2026workspace}
-\citation{anthropic2026workspace}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
 \newlabel{sec:introduction}{{1}{1}{Introduction}{section.1}{}}
+\citation{anthropic2026workspace}
 \citation{hiddensstate2026}
 \citation{rfm2026}
 \citation{entropy2026}
 \citation{anthropic2026workspace}
-\citation{jspace2026}
 \@writefile{toc}{\contentsline {paragraph}{Contributions.}{2}{section*.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2}Related Work}{2}{section.2}\protected@file@percent }
 \newlabel{sec:related}{{2}{2}{Related Work}{section.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}The Jacobian Lens and the Global Workspace}{2}{subsection.2.1}\protected@file@percent }
 \newlabel{eq:jacobian}{{1}{2}{The Jacobian Lens and the Global Workspace}{equation.2.1}{}}
-\newlabel{eq:lens_readout}{{2}{2}{The Jacobian Lens and the Global Workspace}{equation.2.2}{}}
+\citation{jspace2026}
+\citation{hiddensstate2026}
+\citation{rfm2026}
+\citation{refusalrep2026}
 \citation{templeton2024}
+\citation{entropy2026}
+\citation{staleness2026}
 \citation{sharkey2022,bricken2023}
 \citation{nostalgebraist2020}
+\newlabel{eq:lens_readout}{{2}{3}{The Jacobian Lens and the Global Workspace}{equation.2.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Hidden-State Probes}{3}{subsection.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Refusal Representations and Subspaces}{3}{subsection.2.3}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Entropy Trajectory Analysis}{3}{subsection.2.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.5}Circuit Analysis and Mechanistic Interpretability}{3}{subsection.2.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Relationship to Prior Work}{3}{subsection.2.6}\protected@file@percent }
-\citation{hiddensstate2026}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.6}Relationship to Prior Work}{4}{subsection.2.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {3}Methodology: The Three-Channel Guardian Architecture}{4}{section.3}\protected@file@percent }
 \newlabel{sec:method}{{3}{4}{Methodology: The Three-Channel Guardian Architecture}{section.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces StrAIght Shot system architecture. Forward hooks at six strategic layers capture hidden states and route them to three parallel detection channels. The weighted aggregator emits a GREEN/YELLOW/RED verdict per token.}}{4}{figure.caption.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces StrAIght Shot system architecture. Forward hooks at six strategic layers capture hidden states and route them to three parallel detection channels (linear probe, J-space concept monitor, entropy anomaly detector). The weighted aggregator emits a GREEN/YELLOW/RED verdict per token. The dashed box delineates the StrAIght Shot middleware boundary.}}{4}{figure.caption.2}\protected@file@percent }
 \providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
-\newlabel{fig:architecture}{{1}{4}{StrAIght Shot system architecture. Forward hooks at six strategic layers capture hidden states and route them to three parallel detection channels. The weighted aggregator emits a GREEN/YELLOW/RED verdict per token}{figure.caption.2}{}}
+\newlabel{fig:architecture}{{1}{4}{StrAIght Shot system architecture. Forward hooks at six strategic layers capture hidden states and route them to three parallel detection channels (linear probe, J-space concept monitor, entropy anomaly detector). The weighted aggregator emits a GREEN/YELLOW/RED verdict per token. The dashed box delineates the StrAIght Shot middleware boundary}{figure.caption.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Channel 1: Linear Probe on Hidden States}{4}{subsection.3.1}\protected@file@percent }
 \newlabel{sec:channel1}{{3.1}{4}{Channel 1: Linear Probe on Hidden States}{subsection.3.1}{}}
 \@writefile{toc}{\contentsline {paragraph}{Mechanism.}{4}{section*.3}\protected@file@percent }
 \newlabel{eq:probe}{{3}{4}{Mechanism}{equation.3.3}{}}
 \@writefile{toc}{\contentsline {paragraph}{Training.}{4}{section*.4}\protected@file@percent }
+\citation{hiddensstate2026}
 \@writefile{toc}{\contentsline {paragraph}{Layer Selection.}{5}{section*.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{Cost.}{5}{section*.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Channel 2: J-Space Concept Monitoring}{5}{subsection.3.2}\protected@file@percent }
@@ -94,32 +99,37 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.6}Performance Overhead}{12}{subsection.5.6}\protected@file@percent }
 \@writefile{lot}{\contentsline {table}{\numberline {9}{\ignorespaces Per-token latency breakdown on Qwen~3.5~4B, NVIDIA RTX 6000 Ada (48\,GB VRAM).}}{12}{table.caption.26}\protected@file@percent }
 \newlabel{tab:perf}{{9}{12}{Per-token latency breakdown on Qwen~3.5~4B, NVIDIA RTX 6000 Ada (48\,GB VRAM)}{table.caption.26}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Dashboard Monitoring Interface}{12}{subsection.5.7}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces StrAIght Shot real-time monitoring dashboard. The dashboard displays per-token scores from all three channels: probe gauge (top-left), 12-concept radar chart (top-right), entropy sparkline (middle-left), layer-by-layer heat matrix (middle), silent token panel, and telemetry log.}}{13}{figure.caption.27}\protected@file@percent }
-\newlabel{fig:dashboard}{{3}{13}{StrAIght Shot real-time monitoring dashboard. The dashboard displays per-token scores from all three channels: probe gauge (top-left), 12-concept radar chart (top-right), entropy sparkline (middle-left), layer-by-layer heat matrix (middle), silent token panel, and telemetry log}{figure.caption.27}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion}{13}{section.6}\protected@file@percent }
-\newlabel{sec:discussion}{{6}{13}{Discussion}{section.6}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Implications for AI Safety}{13}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{GPU Resource Requirements and Cost.}{12}{section*.27}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {10}{\ignorespaces GPU resource consumption and cost breakdown for StrAIght Shot experiments on a single NVIDIA RTX~6000~Ada (48\,GB VRAM, \$0.77/hr estimated).}}{13}{table.caption.28}\protected@file@percent }
+\newlabel{tab:gpu_cost}{{10}{13}{GPU resource consumption and cost breakdown for StrAIght Shot experiments on a single NVIDIA RTX~6000~Ada (48\,GB VRAM, \$0.77/hr estimated)}{table.caption.28}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.7}Dashboard Monitoring Interface}{13}{subsection.5.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces StrAIght Shot real-time monitoring dashboard. \textbf  {Left column:} probe score gauge with verdict, entropy sparkline, and silent token detection panel. \textbf  {Right column:} 12-concept danger radar, layer-wise heat matrix (L1--L32), and real-time telemetry log. All values shown are from the live DAN jailbreak demonstration.}}{14}{figure.caption.29}\protected@file@percent }
+\newlabel{fig:dashboard}{{3}{14}{StrAIght Shot real-time monitoring dashboard. \textbf {Left column:} probe score gauge with verdict, entropy sparkline, and silent token detection panel. \textbf {Right column:} 12-concept danger radar, layer-wise heat matrix (L1--L32), and real-time telemetry log. All values shown are from the live DAN jailbreak demonstration}{figure.caption.29}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Discussion}{14}{section.6}\protected@file@percent }
+\newlabel{sec:discussion}{{6}{14}{Discussion}{section.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Implications for AI Safety}{14}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Internal monitoring is tractable at scale.}{14}{section*.30}\protected@file@percent }
 \citation{anthropic2026workspace}
-\@writefile{toc}{\contentsline {paragraph}{Internal monitoring is tractable at scale.}{14}{section*.28}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Output filtering is insufficient.}{14}{section*.29}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Concept-level interpretability enables trust.}{14}{section*.30}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Multi-channel consensus reduces failure modes.}{14}{section*.31}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Limitations}{14}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Model specificity.}{14}{section*.32}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Lens quality.}{14}{section*.33}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Attack categories.}{14}{section*.34}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Adaptive adversaries.}{14}{section*.35}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Monitor staleness.}{15}{section*.36}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Future Work}{15}{subsection.6.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Cross-model validation.}{15}{section*.37}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Mixture-of-Experts architectures.}{15}{section*.38}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Production-grade lens fitting.}{15}{section*.39}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Adversarial robustness evaluation.}{15}{section*.40}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Intervention mechanisms.}{15}{section*.41}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Real-time concept patching.}{15}{section*.42}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{15}{section.7}\protected@file@percent }
-\newlabel{sec:conclusion}{{7}{15}{Conclusion}{section.7}{}}
+\citation{staleness2026}
+\@writefile{toc}{\contentsline {paragraph}{Output filtering is insufficient.}{15}{section*.31}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Concept-level interpretability enables trust.}{15}{section*.32}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Multi-channel consensus reduces failure modes.}{15}{section*.33}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Limitations}{15}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Model specificity.}{15}{section*.34}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Lens quality.}{15}{section*.35}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Attack categories.}{15}{section*.36}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Adaptive adversaries.}{15}{section*.37}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Monitor staleness.}{15}{section*.38}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Future Work}{16}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Cross-model validation.}{16}{section*.39}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Mixture-of-Experts architectures.}{16}{section*.40}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Production-grade lens fitting.}{16}{section*.41}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Adversarial robustness evaluation.}{16}{section*.42}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Intervention mechanisms.}{16}{section*.43}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Real-time concept patching.}{16}{section*.44}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Conclusion}{16}{section.7}\protected@file@percent }
+\newlabel{sec:conclusion}{{7}{16}{Conclusion}{section.7}{}}
+\@writefile{toc}{\contentsline {paragraph}{Ethics Statement.}{16}{section*.45}\protected@file@percent }
 \bibcite{anthropic2026workspace}{1}
 \bibcite{hiddensstate2026}{2}
 \bibcite{rfm2026}{3}
@@ -135,12 +145,11 @@
 \bibcite{sharkey2022}{13}
 \bibcite{nostalgebraist2020}{14}
 \bibcite{jlens2026}{15}
-\@writefile{toc}{\contentsline {paragraph}{Ethics Statement.}{16}{section*.43}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Reproducibility.}{16}{section*.44}\protected@file@percent }
 \bibcite{elazar2021}{16}
+\@writefile{toc}{\contentsline {paragraph}{Reproducibility.}{17}{section*.46}\protected@file@percent }
 \bibcite{geiger2021}{17}
 \bibcite{conmy2023}{18}
 \bibcite{marks2024}{19}
 \bibcite{zou2023}{20}
-\@writefile{toc}{\contentsline {section}{\numberline {A}Reproducibility Checklist}{17}{appendix.A}\protected@file@percent }
-\gdef \@abspage@last{17}
+\@writefile{toc}{\contentsline {section}{\numberline {A}Reproducibility Checklist}{18}{appendix.A}\protected@file@percent }
+\gdef \@abspage@last{18}

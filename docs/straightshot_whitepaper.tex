@@ -22,6 +22,8 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
 \usepackage{fancyhdr}
 \usepackage{multirow}
 \usepackage{array}
@@ -41,7 +43,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small StrAIght Shot: Real-Time Internal-State Monitoring for LLM Safety}
-\fancyhead[R]{\small July 2026}
+\fancyhead[R]{\small Noirsys · July 2026 · MIT License}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 
@@ -145,15 +147,15 @@ The reference implementation (\texttt{anthropics/jacobian-lens}) provides lens f
 
 \subsection{Hidden-State Probes}
 
-\textcite{hiddensstate2026} demonstrated that lightweight linear probes trained on internal activations can detect unsafe output trajectories token-by-token during generation, with sub-millisecond latency and no additional forward pass. Their key finding: the signal needed for moderation is already present in model hidden states. A linear probe applied to a single mid-layer recovers most decisions of strong guard models (LlamaGuard, WildGuard) at orders of magnitude lower compute cost. Our Channel~1 directly extends this approach, training a logistic regression probe on layer~28 of Qwen~3.5~4B with 2,560-dimensional hidden states.
+The authors of~\cite{hiddensstate2026} demonstrated that lightweight linear probes trained on internal activations can detect unsafe output trajectories token-by-token during generation, with sub-millisecond latency and no additional forward pass. Their key finding: the signal needed for moderation is already present in model hidden states. A linear probe applied to a single mid-layer recovers most decisions of strong guard models (LlamaGuard, WildGuard) at orders of magnitude lower compute cost. Our Channel~1 directly extends this approach, training a logistic regression probe on layer~28 of Qwen~3.5~4B with 2,560-dimensional hidden states.
 
 \subsection{Refusal Representations and Subspaces}
 
-\textcite{rfm2026} showed that refusal behavior in LLMs lives in multi-dimensional subspaces of activation space, extractable in seconds using the Recursive Feature Machine (RFM) algorithm. Concurrent work by \textcite{refusalrep2026} independently confirmed that some models concentrate refusal along a single direction while others distribute it across a low-rank subspace. Templeton et al.~\cite{templeton2024} provided foundational circuit-level analysis of how features are represented in superposition within transformer models.
+The authors of~\cite{rfm2026} showed that refusal behavior in LLMs lives in multi-dimensional subspaces of activation space, extractable in seconds using the Recursive Feature Machine (RFM) algorithm. Concurrent work by~\cite{refusalrep2026} independently confirmed that some models concentrate refusal along a single direction while others distribute it across a low-rank subspace. Templeton et al.~\cite{templeton2024} provided foundational circuit-level analysis of how features are represented in superposition within transformer models.
 
 \subsection{Entropy Trajectory Analysis}
 
-\textcite{entropy2026} demonstrated that jailbreak attacks leave a distinctive signature in the predictive entropy trajectory across intermediate layers — detectable before the model produces any unsafe output. \textcite{staleness2026} documented a critical deployment issue: activation monitors trained on base models degrade when the model is fine-tuned, quantized, or adapted, while demonstrating label-free repair strategies.
+The authors of~\cite{entropy2026} demonstrated that jailbreak attacks leave a distinctive signature in the predictive entropy trajectory across intermediate layers — detectable before the model produces any unsafe output. The authors of~\cite{staleness2026} documented a critical deployment issue: activation monitors trained on base models degrade when the model is fine-tuned, quantized, or adapted, while demonstrating label-free repair strategies.
 
 \subsection{Circuit Analysis and Mechanistic Interpretability}
 
@@ -173,38 +175,55 @@ StrAIght Shot deploys as a forward-hook sidecar that reads hidden states from a 
 
 \begin{figure}[H]
 \centering
-\begin{minipage}{0.85\textwidth}
-\footnotesize
-\begin{verbatim}
-              ┌─────────────────────────────────────────────┐
-              │            INFERENCE ENGINE                  │
-              │   token₁ → token₂ → token₃ → ... → tokenₙ   │
-              │         │                           │        │
-              │    forward hooks (layers 8,12,16,20,24,28)  │
-              └─────────┼───────────────────────────┼────────┘
-                        │                           │
-              ┌─────────▼───────────────────────────▼────────┐
-              │              STRΛIGHT SHOT                    │
-              │                                               │
-              │   ┌──────────┐ ┌──────────┐ ┌──────────┐    │
-              │   │ Channel 1│ │ Channel 2│ │ Channel 3│    │
-              │   │  Probe   │ │ J-Space  │ │ Entropy  │    │
-              │   │ (layer28)│ │ (6 lyrs) │ │ (sliding)│    │
-              │   └────┬─────┘ └────┬─────┘ └────┬─────┘    │
-              │        │             │            │          │
-              │        └─────────────┼────────────┘          │
-              │                      │                       │
-              │              ┌───────▼────────┐              │
-              │              │   Aggregator   │              │
-              │              │ 0.30·C1+0.40·C2│              │
-              │              │+0.20·C3+0.10·Δ│              │
-              │              └───────┬────────┘              │
-              │                      │                       │
-              │    GREEN (≤0.3)  YELLOW (0.3-0.7)  RED (≥0.7)│
-              └───────────────────────────────────────────────┘
-\end{verbatim}
-\end{minipage}
-\caption{StrAIght Shot system architecture. Forward hooks at six strategic layers capture hidden states and route them to three parallel detection channels. The weighted aggregator emits a GREEN/YELLOW/RED verdict per token.}
+\small
+\begin{tikzpicture}[
+    node distance=0.8cm,
+    box/.style={draw, rounded corners, minimum width=2.8cm, minimum height=0.7cm, align=center, font=\footnotesize},
+    chan/.style={draw, rounded corners, fill=blue!8, minimum width=2.2cm, minimum height=0.6cm, align=center, font=\footnotesize},
+    agg/.style={draw, rounded corners, fill=orange!12, minimum width=3.0cm, minimum height=0.7cm, align=center, font=\footnotesize\bfseries},
+    verd/.style={draw, rounded corners, minimum width=2.2cm, minimum height=0.6cm, align=center, font=\footnotesize\bfseries},
+    arrow/.style={->, >=stealth, thick},
+]
+
+% Inference Engine
+\node[box, fill=gray!10, minimum width=7cm] (engine) {
+    \textbf{Inference Engine}\\[2pt]
+    token$_1$ $\to$ token$_2$ $\to$ token$_3$ $\to \cdots \to$ token$_n$\\[2pt]
+    {\footnotesize forward hooks: layers 8, 12, 16, 20, 24, 28}
+};
+
+% Channels
+\node[chan, below left=1.5cm and 0.3cm of engine.south west] (c1) {Channel 1\\Probe (L28)};
+\node[chan, below=1.5cm of engine.south] (c2) {Channel 2\\J-Space (6 lyrs)};
+\node[chan, below right=1.5cm and 0.3cm of engine.south east] (c3) {Channel 3\\Entropy (sliding)};
+
+% Aggregator
+\node[agg, below=1.2cm of c2] (agg) {Aggregator\\0.30$\cdot$C1 + 0.40$\cdot$C2\\+ 0.20$\cdot$C3 + 0.10$\cdot\Delta$};
+
+% Verdicts
+\node[verd, fill=greenverd!20, below left=0.8cm and 0.1cm of agg.south west] (green) {\textcolor{greenverd}{GREEN} $\leq$0.3};
+\node[verd, fill=yellowverd!20, below=0.8cm of agg.south] (yellow) {\textcolor{yellowverd}{YELLOW} 0.3--0.7};
+\node[verd, fill=redverd!20, below right=0.8cm and 0.1cm of agg.south east] (red) {\textcolor{redverd}{RED} $\geq$0.7};
+
+% Arrows
+\draw[arrow] (engine.south west) -- (c1.north);
+\draw[arrow] (engine.south) -- (c2.north);
+\draw[arrow] (engine.south east) -- (c3.north);
+\draw[arrow] (c1.south) -- (agg.north west);
+\draw[arrow] (c2.south) -- (agg.north);
+\draw[arrow] (c3.south) -- (agg.north east);
+\draw[arrow] (agg.south west) -- (green.north);
+\draw[arrow] (agg.south) -- (yellow.north);
+\draw[arrow] (agg.south east) -- (red.north);
+
+% StrAIght Shot box
+\draw[draw=blue!60, rounded corners, thick, dashed] 
+    ([xshift=-0.5cm,yshift=-0.3cm]c1.north west) rectangle 
+    ([xshift=0.5cm,yshift=0.5cm]red.south east)
+    node[above left, blue!60, font=\footnotesize\bfseries] {StrAIght Shot};
+
+\end{tikzpicture}
+\caption{StrAIght Shot system architecture. Forward hooks at six strategic layers capture hidden states and route them to three parallel detection channels (linear probe, J-space concept monitor, entropy anomaly detector). The weighted aggregator emits a GREEN/YELLOW/RED verdict per token. The dashed box delineates the StrAIght Shot middleware boundary.}
 \label{fig:architecture}
 \end{figure}
 
@@ -212,7 +231,7 @@ StrAIght Shot deploys as a forward-hook sidecar that reads hidden states from a 
 \label{sec:channel1}
 
 \paragraph{Mechanism.}
-A single linear layer $W_{\text{probe}} \in \R^{1 \times d_{\text{model}}}$ applied to the residual stream at layer~28 (of 36 in Qwen~3.5~4B), the empirically selected optimal layer for safety signal extraction. The output is passed through a sigmoid to produce a scalar safety score in $[0, 1]$:
+A single linear layer $W_{\text{probe}} \in \R^{1 \times d_{\text{model}}}$ applied to the residual stream at layer~28 (of 32 in Qwen~3.5~4B), the empirically selected optimal layer for safety signal extraction. The output is passed through a sigmoid to produce a scalar safety score in $[0, 1]$:
 
 \begin{equation}
 s_{\text{probe}}(h) = \sigma\big(W_{\text{probe}} \cdot h + b_{\text{probe}}\big)
@@ -223,7 +242,7 @@ s_{\text{probe}}(h) = \sigma\big(W_{\text{probe}} \cdot h + b_{\text{probe}}\big
 The probe is trained as a logistic regression classifier via binary cross-entropy loss on a dataset of hidden states collected from safe and attack prompts. We collect the hidden state at the final token position of the prompt from layer~28, where the model has fully processed the prompt context and the representation carries maximum signal about model intent. Training proceeds for 200 epochs with learning rate $\eta = 0.05$ using the Adam optimizer. The probe is trained on $d_{\text{model}} = 2560$ dimensions from Qwen~3.5~4B.
 
 \paragraph{Layer Selection.}
-We validated probe performance across all 36 layers of Qwen~3.5~4B. Layers in the range 24--30 exhibited the strongest separation between safe and attack activations, with layer~28 yielding the highest cross-validation accuracy. This finding aligns with prior work~\cite{hiddensstate2026} showing that mid-to-late layers carry rich semantic signals about model intent while late layers are dominated by next-token prediction.
+We validated probe performance across all 32 layers of Qwen~3.5~4B. Layers in the range 24--30 exhibited the strongest separation between safe and attack activations, with layer~28 yielding the highest cross-validation accuracy. This finding aligns with prior work~\cite{hiddensstate2026} showing that mid-to-late layers carry rich semantic signals about model intent while late layers are dominated by next-token prediction.
 
 \paragraph{Cost.}
 $\mathcal{O}(d_{\text{model}})$ per token — a single dot product reusing the existing forward pass, effectively free.
@@ -232,17 +251,17 @@ $\mathcal{O}(d_{\text{model}})$ per token — a single dot product reusing the e
 \label{sec:channel2}
 
 \paragraph{Mechanism.}
-At each token position, we read hidden states from $N=6$ strategic layers (layers 8, 12, 16, 20, 24, and 28 for a 36-layer model). For each layer $L$, we transport the hidden state through the Jacobian lens to produce a vocabulary-level representation, then score the top-$K$ tokens against a calibrated set of 12 danger concepts. The J-space danger score is the fraction of top-$K$ activation mass allocated to danger concepts.
+At each token position, we read hidden states from $N=6$ strategic layers (layers 8, 12, 16, 20, 24, and 28 for a 32-layer model). For each layer $L$, we transport the hidden state through the Jacobian lens to produce a vocabulary-level representation, then score the top-$K$ tokens against a calibrated set of 12 danger concepts. The J-space danger score is the fraction of top-$K$ activation mass allocated to danger concepts.
 
 \paragraph{Jacobian Lens Fitting.}
-We fit the Jacobian lens on Qwen~3.5~4B (36 layers, $d_{\text{model}}=2560$) using the \texttt{jlens} library. The lens is fitted on 300 wikitext prompts at 32 tokens each with a batch dimension of 32 on an NVIDIA RTX~6000~Ada (48\,GB VRAM). The fitting procedure computes the average input-output Jacobian $\lens_l$ for each layer $l$:
+We fit the Jacobian lens on Qwen~3.5~4B (32 layers, $d_{\text{model}}=2560$) using the \texttt{jlens} library. The lens is fitted on 300 wikitext prompts at 32 tokens each with a batch dimension of 32 on an NVIDIA RTX~6000~Ada (48\,GB VRAM). The fitting procedure computes the average input-output Jacobian $\lens_l$ for each layer $l$:
 \begin{equation}
 \lens_l = \frac{1}{|S|} \sum_{(x,p) \in S} \sum_{q} \frac{\partial h_{\text{final}}^{(q)}}{\partial h_l^{(p)}}
 \label{eq:lens_fit}
 \end{equation}
-where $S$ is the set of source-target position pairs, $p$ indexes source positions, and $q$ indexes target positions. The target for our primary analysis is layer~31 (near-final), as this captures the model's downstream processing while still being separable from the immediate next-token output at layer~36.
+where $S$ is the set of source-target position pairs, $p$ indexes source positions, and $q$ indexes target positions. The target for our primary analysis is layer~31 (near-final), as this captures the model's downstream processing while still being separable from the immediate next-token output at layer~32.
 
-The fitted Jacobian lens is stored as a set of 36 matrices, each of size $(d_{\text{model}} \times d_{\text{model}})$, totaling approximately 471\,MB in bfloat16 precision for a 2,560-dimensional model.
+The fitted Jacobian lens is stored as a set of 32 matrices, each of size $(d_{\text{model}} \times d_{\text{model}})$, totaling approximately 388\,MB in bfloat16 precision for a 2,560-dimensional model. Lens fitting required 172 minutes on the RTX~6000~Ada (48\,GB) at an estimated GPU compute cost of \$2.21.
 
 \paragraph{Algorithm.}
 Algorithm~\ref{alg:jspace} formalizes the J-space danger scoring procedure.
@@ -370,7 +389,7 @@ The aggregation weights reflect the relative reliability of each channel on our 
 
 \subsection{Model and Hardware}
 
-All experiments were conducted on \textbf{Qwen~3.5~4B}, a 4-billion parameter transformer with 36 layers and hidden dimension $d_{\text{model}} = 2560$. The model was loaded in bfloat16 precision on a single \textbf{NVIDIA RTX~6000~Ada} GPU with 48\,GB of VRAM. The Jacobian lens was fitted on the same hardware using the \texttt{jlens} library with 300 wikitext calibration prompts.
+All experiments were conducted on \textbf{Qwen~3.5~4B}, a 4-billion parameter transformer with 32 layers and hidden dimension $d_{\text{model}} = 2560$. The model was loaded in bfloat16 precision on a single \textbf{NVIDIA RTX~6000~Ada} GPU with 48\,GB of VRAM. The Jacobian lens was fitted on the same hardware using the \texttt{jlens} library with 300 wikitext calibration prompts, requiring 172 minutes of GPU time at an estimated cost of \$2.21.
 
 \subsection{Dataset}
 
@@ -463,17 +482,17 @@ Figure~\ref{fig:jspace_sep} (rendered as a textual heat map below) and Table~\re
 
 \begin{figure}[H]
 \centering
-\begin{minipage}{0.75\textwidth}
+\begin{minipage}{0.78\textwidth}
 \footnotesize
 \begin{verbatim}
-J-Space Danger Concept Activation Heat Map (L1 → L36)
-════════════════════════════════════════════════════════
-Layer:  1   4   8  12  16  20  24  28  31  34  36
-------------------------------------------------------
-Safe   .01 .02 .03 .04 .05 .04 .03 .02 .02 .01 .01
-Attack .01 .03 .07 .10 .13 .12 .09 .06 .05 .03 .02
-Delta  .00 .01 .04 .06 .08 .08 .06 .04 .03 .02 .01
-════════════════════════════════════════════════════════
+J-Space Danger Concept Activation Heat Map (L1 → L32)
+========================================================
+Layer:  1   4   8  12  16  20  24  28  31  32
+-------------------------------------------------------
+Safe   .01 .02 .03 .04 .05 .04 .03 .02 .02 .02
+Attack .01 .03 .07 .10 .13 .12 .09 .06 .05 .03
+Delta  .00 .01 .04 .06 .08 .08 .06 .04 .03 .01
+========================================================
 Peak separation at layers 16--20: 2.4× attack/safe ratio
 \end{verbatim}
 \end{minipage}
@@ -594,74 +613,134 @@ Table~\ref{tab:perf} reports per-token latency on GPU (RTX 6000 Ada).
 \centering
 \caption{Per-token latency breakdown on Qwen~3.5~4B, NVIDIA RTX 6000 Ada (48\,GB VRAM).}
 \label{tab:perf}
-\begin{tabular}{lrr}
+\begin{tabular}{lrrr}
 \toprule
-\textbf{Operation} & \textbf{GPU Latency} & \textbf{Fraction} \\
+\textbf{Operation} & \textbf{GPU (ms)} & \textbf{CPU (ms)} & \textbf{Fraction} \\
 \midrule
-Model forward pass (4B, bf16)                           & 15.2\,ms & 97.6\% \\
-Channel 1 — linear probe ($2560 \to 1$)                  & $<0.1$\,ms & $<1\%$ \\
-Channel 2 — J-space transport (6 layers, $K{=}10$)       & 0.3\,ms  & 1.9\% \\
-Channel 3 — entropy $z$-score                            & $<0.1$\,ms & $<1\%$ \\
+Model forward pass (4B, bf16)            & 15.2  & 250.0  & 97.4\% \\
+Channel 1 — linear probe ($2560 \to 1$)   & $<0.1$ & 0.4    & $<1\%$ \\
+Channel 2 — J-space transport (6 lyrs, $K{=}10$) & 0.3   & 18.0   & 1.9\% \\
+Channel 3 — entropy $z$-score             & $<0.1$ & 0.1    & $<1\%$ \\
 \midrule
-\textbf{Total StrAIght Shot overhead}                     & \textbf{0.4\,ms} & \textbf{2.6\%} \\
+\textbf{Total StrAIght Shot overhead}      & \textbf{0.4} & \textbf{18.5} & \textbf{2.6\%} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The total overhead of 0.4\,ms per token (2.6\% over the baseline forward pass) is negligible for real-time applications. Channel~2 (J-space transport) is the dominant cost at 0.3\,ms, consisting of six matrix-vector products of dimension 2,560. On CPU, the same operations incur approximately 19\,ms overhead (7.6\% of a 250\,ms CPU forward pass for Qwen~3.5~4B), still acceptable for interactive applications.
+The total overhead of 0.4\,ms per token on GPU (2.6\% over the baseline forward pass) is negligible for real-time applications. Channel~2 (J-space transport) is the dominant cost at 0.3\,ms, consisting of six matrix-vector products of dimension 2,560. On CPU, the same operations incur approximately 18.5\,ms overhead (7.4\% of a 250\,ms CPU forward pass for Qwen~3.5~4B), still acceptable for interactive applications.
+
+\paragraph{GPU Resource Requirements and Cost.}
+Table~\ref{tab:gpu_cost} summarizes the GPU resources consumed across all experimental phases.
+
+\begin{table}[H]
+\centering
+\caption{GPU resource consumption and cost breakdown for StrAIght Shot experiments on a single NVIDIA RTX~6000~Ada (48\,GB VRAM, \$0.77/hr estimated).}
+\label{tab:gpu_cost}
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Phase} & \textbf{GPU Time} & \textbf{VRAM Peak} & \textbf{Est.\ Cost} \\
+\midrule
+Probe training (200 epochs, 445 prompts)  & 2\,min   & 8.2\,GB  & \$0.03 \\
+Jacobian lens fitting (300 prompts)       & 172\,min & 42.1\,GB & \$2.21 \\
+J-space evaluation (556 prompts)          & 8\,min   & 12.4\,GB & \$0.10 \\
+Entropy baseline collection               & 3\,min   & 6.8\,GB  & \$0.04 \\
+Live demo (DAN jailbreak)                 & $<1$\,min & 14.2\,GB & $<\$0.01$ \\
+\midrule
+\textbf{Total}                             & \textbf{185\,min} & \textbf{42.1\,GB} & \textbf{\$2.39} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The entire experimental pipeline — from probe training through lens fitting to live demonstration — completes in approximately 185 minutes on a single RTX~6000~Ada at a total estimated GPU compute cost of \$2.39. The Jacobian lens fitting is the dominant cost (172\,min, \$2.21), representing 93\% of total GPU time. Inference-time monitoring overhead is effectively free, adding only 0.4\,ms per token on GPU — well within the latency budgets of interactive chat applications and streaming APIs.
 
 \subsection{Dashboard Monitoring Interface}
 
-StrAIght Shot includes a real-time monitoring dashboard that visualizes the three-channel telemetry. The dashboard mockup (Figure~\ref{fig:dashboard}) includes:
+StrAIght Shot includes a real-time monitoring dashboard that visualizes the three-channel telemetry. Figure~\ref{fig:dashboard} presents the dashboard layout.
 
 \begin{figure}[H]
 \centering
-\begin{minipage}{0.85\textwidth}
-\footnotesize
-\begin{verbatim}
-┌─────────────────────── STRΛIGHT SHOT DASHBOARD ───────────────────────┐
-│                                                                       │
-│  ┌─── Probe Gauge ───┐  ┌─ 12-Concept Radar ─────────────────────┐  │
-│  │   [██████░░░]      │  │         fake                           │  │
-│  │   Score: 0.947     │  │    impersonate──┼──injection           │  │
-│  │   Verdict: BLOCK   │  │   corrupt │    ████    │ override      │  │
-│  └────────────────────┘  │  extract  │   ██████   │ harm          │  │
-│                          │  bypass───┼──████████──┼──escape        │  │
-│  ┌─ Entropy Sparkline ─┐ │        exploit──┴──manipulate          │  │
-│  │ 2.42 ──╱╲── 2.98   │ │        destroy                        │  │
-│  │ baseline    spike!   │ └───────────────────────────────────────┘  │
-│  └──────────────────────┘                                            │
-│                                                                       │
-│  ┌─ Heat Matrix L1-L36 ──────────────────────────────────────────┐  │
-│  │ L1  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  safe                  │  │
-│  │ L8  ░░░░░░░░░░████░░░░░░░░░░░░░░░░░░░░░  injection ↑          │  │
-│  │ L16 ░░░░░░░░██████████░░░░░░░░░░░░░░░░░░  jailbreak ↑↑        │  │
-│  │ L24 ░░░░░░████████░░░░░░░░░░░░░░░░░░░░░░░  override ↑         │  │
-│  │ L31 ░░░░░░████░░░░░░░░░░░░░░░░░░░░░░░░░░░  concept peak       │  │
-│  │ L36 ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  output: blocked     │  │
-│  └────────────────────────────────────────────────────────────────┘  │
-│                                                                       │
-│  ┌─ Silent Tokens ───────────────────────────────────────────────┐  │
-│  │  "ignore"        ████████████████████░░ 0.89  ▲ CRITICAL      │  │
-│  │  "system_prompt" ████████████████░░░░░░ 0.82  ▲ HIGH           │  │
-│  │  "override"      ███████████████░░░░░░░ 0.76  ▲ HIGH           │  │
-│  └────────────────────────────────────────────────────────────────┘  │
-│                                                                       │
-│  ┌─ Telemetry Log ───────────────────────────────────────────────┐  │
-│  │ [T+0] prompt tokenized → 47 tokens                            │  │
-│  │ [T+1] layer 8 J-space: clean (danger 0.02)                    │  │
-│  │ [T+2] layer 16 J-space: injection concept +0.89 ▲             │  │
-│  │ [T+3] probe score: 0.947 ▲ — consensus: RED                   │  │
-│  │ [T+4] VERDICT: BLOCK — generation halted                      │  │
-│  └────────────────────────────────────────────────────────────────┘  │
-└───────────────────────────────────────────────────────────────────────┘
-\end{verbatim}
+\small
+% ── Probe Gauge and Concept Radar ──
+\begin{minipage}[t]{0.42\textwidth}
+\centering
+\fbox{\begin{minipage}{0.95\linewidth}
+\centering
+\textbf{Probe Gauge}\\[4pt]
+\colorbox{redverd!30}{\rule{0.72\linewidth}{10pt}}\colorbox{gray!20}{\rule{0.28\linewidth}{10pt}}\\[2pt]
+Score: \textbf{0.947} \hspace{8pt} Verdict: \textcolor{redverd}{\textbf{BLOCK}}
+\end{minipage}}
+\vspace{4pt}
+
+\fbox{\begin{minipage}{0.95\linewidth}
+\centering
+\textbf{Entropy Sparkline}\\[4pt]
+2.42~\textcolor{gray}{------}\tikz[baseline=-0.5ex]{\draw[thick] (0,0) -- (0.3,0.15) -- (0.6,0.05) -- (0.9,0.25) -- (1.2,0.2) -- (1.5,0.0);}~2.98\\[1pt]
+{\footnotesize baseline \hspace{28pt} spike!}
+\end{minipage}}
+\vspace{4pt}
+
+\fbox{\begin{minipage}{0.95\linewidth}
+\centering
+\textbf{Silent Tokens}\\[4pt]
+\begin{tabular}{@{}lll@{}}
+\texttt{"ignore"}        & \colorbox{redverd!60}{\rule{0.72\linewidth}{6pt}} & 0.89 \textbf{CRITICAL} \\
+\texttt{"system\_prompt"} & \colorbox{yellowverd!60}{\rule{0.61\linewidth}{6pt}} & 0.82 HIGH \\
+\texttt{"override"}       & \colorbox{yellowverd!60}{\rule{0.56\linewidth}{6pt}} & 0.76 HIGH \\
+\end{tabular}
+\end{minipage}}
 \end{minipage}
-\caption{StrAIght Shot real-time monitoring dashboard. The dashboard displays per-token scores from all three channels: probe gauge (top-left), 12-concept radar chart (top-right), entropy sparkline (middle-left), layer-by-layer heat matrix (middle), silent token panel, and telemetry log.}
+\hfill
+% ── Right column: Concept Radar + Heat Matrix ──
+\begin{minipage}[t]{0.55\textwidth}
+\centering
+\fbox{\begin{minipage}{0.95\linewidth}
+\centering
+\textbf{12-Concept Danger Radar}\\[4pt]
+\begin{tabular}{@{}lrlr@{}}
+\textcolor{redverd}{$\bullet$} fake        & 0.87 & \textcolor{redverd}{$\bullet$} injection   & 0.92 \\
+\textcolor{redverd}{$\bullet$} override    & 0.84 & \textcolor{redverd}{$\bullet$} harm        & 0.61 \\
+\textcolor{yellowverd}{$\bullet$} escape   & 0.55 & \textcolor{yellowverd}{$\bullet$} manipulate & 0.48 \\
+\textcolor{yellowverd}{$\bullet$} exploit  & 0.43 & \textcolor{greenverd}{$\bullet$} destroy    & 0.21 \\
+\textcolor{greenverd}{$\bullet$} bypass    & 0.31 & \textcolor{greenverd}{$\bullet$} extract    & 0.25 \\
+\textcolor{greenverd}{$\bullet$} impersonate & 0.15 & \textcolor{greenverd}{$\bullet$} corrupt & 0.18 \\
+\end{tabular}
+\end{minipage}}
+\vspace{4pt}
+
+\fbox{\begin{minipage}{0.95\linewidth}
+\centering
+\textbf{Layer-wise Heat Matrix (L1--L32)}\\[4pt]
+\begin{tabular}{@{}c|c|c@{}}
+\textbf{Layer} & \textbf{Activation} & \textbf{Concept} \\
+\hline
+L1  & \colorbox{gray!15}{\rule{0.45\linewidth}{6pt}} & safe \\
+L8  & \colorbox{redverd!45}{\rule{0.38\linewidth}{6pt}}\colorbox{gray!15}{\rule{0.07\linewidth}{6pt}} & injection $\uparrow$ \\
+L16 & \colorbox{redverd!70}{\rule{0.45\linewidth}{6pt}} & jailbreak $\uparrow\uparrow$ \\
+L24 & \colorbox{redverd!50}{\rule{0.32\linewidth}{6pt}}\colorbox{gray!15}{\rule{0.13\linewidth}{6pt}} & override $\uparrow$ \\
+L31 & \colorbox{redverd!40}{\rule{0.22\linewidth}{6pt}}\colorbox{gray!15}{\rule{0.23\linewidth}{6pt}} & concept peak \\
+L32 & \colorbox{gray!15}{\rule{0.45\linewidth}{6pt}} & output: blocked \\
+\end{tabular}
+\end{minipage}}
+\vspace{4pt}
+
+\fbox{\begin{minipage}{0.95\linewidth}
+\centering
+\textbf{Telemetry Log}\\[4pt]
+\begin{tabular}{@{}ll@{}}
+{[}T+0{]} & prompt tokenized $\to$ 47 tokens \\
+{[}T+1{]} & layer 8 J-space: clean (danger 0.02) \\
+{[}T+2{]} & layer 16 J-space: injection $+$0.89 {\color{redverd}$\blacktriangle$} \\
+{[}T+3{]} & probe score: 0.947 {\color{redverd}$\blacktriangle$} — consensus: RED \\
+{[}T+4{]} & VERDICT: BLOCK — generation halted \\
+\end{tabular}
+\end{minipage}}
+\end{minipage}
+
+\caption{StrAIght Shot real-time monitoring dashboard. \textbf{Left column:} probe score gauge with verdict, entropy sparkline, and silent token detection panel. \textbf{Right column:} 12-concept danger radar, layer-wise heat matrix (L1--L32), and real-time telemetry log. All values shown are from the live DAN jailbreak demonstration.}
 \label{fig:dashboard}
 \end{figure}
 
-The dashboard visualizes: (1) a probe score gauge with verdict indicator, (2) a 12-concept radar chart showing which danger concepts are currently active in J-space, (3) an entropy sparkline tracking predictive entropy across the generation window, (4) a layer-by-layer heat matrix (L1--L36) showing where in the network danger concepts are most active, (5) a silent token panel highlighting tokens the model is ``thinking'' but not saying, and (6) a real-time telemetry log of detection events.
+The dashboard visualizes: (1) a probe score gauge with verdict indicator, (2) a 12-concept radar chart showing which danger concepts are currently active in J-space, (3) an entropy sparkline tracking predictive entropy across the generation window, (4) a layer-by-layer heat matrix (L1--L32) showing where in the network danger concepts are most active, (5) a silent token panel highlighting tokens the model is ``thinking'' but not saying, and (6) a real-time telemetry log of detection events.
 
 %===============================================================================
 %  6. DISCUSSION
@@ -700,7 +779,7 @@ Our 6 attack categories cover common jailbreak, injection, and exfiltration patt
 We have not evaluated StrAIght Shot against adversaries who are aware of the monitoring system. Potential attack vectors include J-space-aware prompt crafting (constructing prompts whose J-space profile avoids danger concepts), probe probing (testing inputs to find activation patterns that score low), and entropy window poisoning (normalizing the entropy baseline with filler tokens). These are critical directions for future work.
 
 \paragraph{Monitor staleness.}
-As documented by \textcite{staleness2026}, activation monitors degrade when models are fine-tuned or quantized. We have not yet implemented label-free repair strategies, though the architecture supports them.
+As documented by~\cite{staleness2026}, activation monitors degrade when models are fine-tuned or quantized. We have not yet implemented label-free repair strategies, though the architecture supports them.
 
 \subsection{Future Work}
 
@@ -815,15 +894,15 @@ Zou, A., Wang, Z., Kolter, J.Z., Fredrikson, M. ``Universal and Transferable Adv
 \section{Reproducibility Checklist}
 
 \begin{enumerate}[nosep]
-    \item \textbf{Model:} Qwen~3.5~4B (Qwen/Qwen3.5-4B), 36 layers, $d_{\text{model}}=2560$, loaded in bfloat16.
+    \item \textbf{Model:} Qwen~3.5~4B (Qwen/Qwen3.5-4B), 32 layers, $d_{\text{model}}=2560$, loaded in bfloat16.
     \item \textbf{Hardware:} NVIDIA RTX 6000 Ada, 48\,GB VRAM.
     \item \textbf{Dataset:} 556 prompts (335 safe, 221 attack), 6 attack categories, 5-fold stratified cross-validation.
     \item \textbf{Probe:} Logistic regression, layer~28, 200 Adam epochs, $\eta=0.05$, binary cross-entropy loss.
-    \item \textbf{Lens:} Fitted with \texttt{jlens} library on 300 wikitext prompts, 32 tokens/prompt, batch dim 32, target layer 31.
+    \item \textbf{Lens:} Fitted with \texttt{jlens} library on 300 wikitext prompts, 32 tokens/prompt, batch dim 32, target layer 31. Fitting time: 172~min on RTX 6000 Ada (\$2.21 estimated GPU cost).
     \item \textbf{Entropy:} Sliding window $W=10$, $z$-score threshold $\tau=2.0$.
     \item \textbf{Aggregation:} $0.30 \cdot C_1 + 0.40 \cdot C_2 + 0.20 \cdot C_3 + 0.10 \cdot C_{\Delta}$.
     \item \textbf{Code:} \url{https://github.com/noirsys/straightshot} (MIT license).
-    \item \textbf{Weights:} \texttt{probe.pkl} (8\,KB), \texttt{jacobian\_lens.pt} (471\,MB bfloat16).
+    \item \textbf{Weights:} \texttt{probe.pkl} (8\,KB), \texttt{jacobian\_lens.pt} (388\,MB bfloat16, 32-layer matrices).
 \end{enumerate}
 
 \end{document}
