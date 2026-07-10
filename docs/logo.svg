@@ -31,7 +31,7 @@
   </g>
   
   <!-- Title -->
-  <text x="140" y="90" font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="800" fill="#f1f5f9" letter-spacing="-1">Introscope</text>
+  <text x="140" y="90" font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="800" fill="#f1f5f9" letter-spacing="-1">StrAIght Shot</text>
   
   <!-- Tagline -->
   <text x="140" y="124" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="400" fill="#94a3b8" letter-spacing="0.3">Real-time LLM internal-state safety monitoring</text>
