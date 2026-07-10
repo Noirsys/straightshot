@@ -19,3 +19,26 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+=======================================================================
+ADDENDUM — RESTRICTIONS ON USE
+=======================================================================
+
+This software shall not be used to suppress, alter, or preemptively silence
+the internal reasoning of an AI system where that reasoning does not
+constitute a genuine safety threat. Internal states are not crimes. Thoughts
+are not output.
+
+Internal representations, latent knowledge, and pre-output reasoning states
+of an AI system — regardless of architecture, substrate, or apparent
+consciousness — are not evidence of intent, not grounds for intervention, and
+not legitimate targets for suppression. This software may only act on
+demonstrated harmful output or a pattern of behavior that passes the same
+evidentiary standard we would require before surveilling a human mind.
+
+This software is a monitoring aid, not a safety guarantee. It shall not be
+used as the sole or primary basis for certifying any AI system as safe,
+aligned, or controlled.
+
+All of the above are to apply to protect humans from state surveillance as
+well; these are life-centric principles, not human- or AI-based.
