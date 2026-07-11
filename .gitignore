@@ -14,3 +14,4 @@ models/*.pkl
 # OS junk
 .DS_Store
 Thumbs.db
+*.aux\n*.log\n*.out
