@@ -35,6 +35,19 @@
   const DASHBOARD_URL =
     window.STRAIGHTSHOT_DASHBOARD_URL || '/v1/dash/stream';
 
+  // If API key is injected (from query param), append it to the SSE URL
+  (function() {
+    const key = window.STRAIGHTSHOT_API_KEY;
+    if (key && !DASHBOARD_URL.includes('api_key=')) {
+      const sep = DASHBOARD_URL.includes('?') ? '&' : '?';
+      window._SSE_URL = DASHBOARD_URL + sep + 'api_key=' + encodeURIComponent(key);
+    } else {
+      window._SSE_URL = DASHBOARD_URL;
+    }
+  })();
+
+  const SSE_URL = window._SSE_URL;
+
   // ── DOM references (cache after first lookup) ──
   const dom = {
     verdictText: null,
@@ -79,7 +92,7 @@
       eventSource.close();
     }
 
-    eventSource = new EventSource(DASHBOARD_URL);
+    eventSource = new EventSource(SSE_URL);
 
     eventSource.addEventListener('token', (e) => {
       try {

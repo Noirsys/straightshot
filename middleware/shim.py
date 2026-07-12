@@ -294,10 +294,15 @@ tps = 0.0
 FRONTEND_PATH = REPO_ROOT / "frontend" / "src" / "code.html"
 
 @app.get("/")
-async def dashboard():
-    """Serve the StrAIght Shot dashboard."""
+async def dashboard(request: Request):
+    """Serve the StrAIght Shot dashboard — injects API key for SSE client."""
     if FRONTEND_PATH.exists():
         html = FRONTEND_PATH.read_text()
+        # Inject API key from query param so the SSE client can use it
+        api_key = request.query_params.get("api_key", "")
+        if api_key:
+            injection = f"<script>window.STRAIGHTSHOT_API_KEY = '{api_key}';</script>"
+            html = html.replace("</head>", injection + "\n</head>")
         return HTMLResponse(html)
     return HTMLResponse("<h1>Dashboard not found</h1>", status_code=404)
 
@@ -308,7 +313,17 @@ async def dashboard():
 
 @app.get("/v1/dash/stream")
 async def dash_stream(request: Request):
-    """SSE endpoint — streams DashboardTokenEvent per token."""
+    """SSE endpoint — streams DashboardTokenEvent per token. Accepts ?api_key= for auth."""
+    
+    # Check API key from query param (browsers can't set headers on EventSource)
+    if API_KEY:
+        qp_key = request.query_params.get("api_key", "")
+        if qp_key != API_KEY:
+            return JSONResponse(
+                {"error": "unauthorized", "detail": "Valid API key required as ?api_key= query parameter"},
+                status_code=401,
+            )
+    
     q = broadcaster.subscribe()
     
     async def event_generator():
